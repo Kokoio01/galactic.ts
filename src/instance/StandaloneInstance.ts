@@ -9,13 +9,15 @@ export class StandaloneInstance extends BotInstance {
 
     public readonly token: string;
     public readonly intents: GatewayIntentsString[];
+    public readonly clusterEnvironment: Record<string, string> | undefined;
 
-    constructor(entryPoint: string, shardsPerCluster: number, totalClusters: number, token: string, intents: GatewayIntentsString[], execArgv?: string[]) {
+    constructor(entryPoint: string, shardsPerCluster: number, totalClusters: number, token: string, intents: GatewayIntentsString[], clusterEnvironment?: Record<string, string>, execArgv?: string[]) {
         super(entryPoint, execArgv);
         this.shardsPerCluster = shardsPerCluster;
         this.totalClusters = totalClusters;
         this.token = token;
         this.intents = intents;
+        this.clusterEnvironment = clusterEnvironment;
     }
 
     get totalShards(): number {
@@ -36,7 +38,7 @@ export class StandaloneInstance extends BotInstance {
     public start(): void {
         const clusters = this.calculateClusters();
         for (const [id, shardList] of Object.entries(clusters)) {
-            this.startProcess(1, Number(id), shardList, this.totalShards, this.token, this.intents);
+            this.startProcess(1, Number(id), shardList, this.totalShards, this.token, this.intents, this.clusterEnvironment);
         }
     }
 
@@ -46,7 +48,7 @@ export class StandaloneInstance extends BotInstance {
     }
 
     protected setClusterReady(clusterProcess: ClusterProcess): void {
-        
+
     }
 
     protected setClusterSpawned(clusterProcess: ClusterProcess): void {
@@ -54,7 +56,7 @@ export class StandaloneInstance extends BotInstance {
     }
 
     private restartProcess(clusterProcess: ClusterProcess): void {
-        this.startProcess(1, clusterProcess.id, clusterProcess.shardList, this.totalShards, this.token, this.intents);
+        this.startProcess(1, clusterProcess.id, clusterProcess.shardList, this.totalShards, this.token, this.intents, this.clusterEnvironment);
     }
 
     protected onRequest(clusterProcess: ClusterProcess, message: any): Promise<unknown> {

@@ -190,6 +190,7 @@ export class ManagedInstance extends BotInstance {
             totalShards: number,
             token: string,
             intents: GatewayIntentsString[]
+            clusterEnvironment: Record<string, string>
         }
 
         if (this.clusters.has(m.clusterID)) {
@@ -205,7 +206,7 @@ export class ManagedInstance extends BotInstance {
             return;
         }
 
-        this.startProcess(this.instanceID, m.clusterID, m.shardList, m.totalShards, m.token, m.intents);
+        this.startProcess(this.instanceID, m.clusterID, m.shardList, m.totalShards, m.token, m.intents, m.clusterEnvironment);
     }
 
     private onClusterStop(message: unknown) {

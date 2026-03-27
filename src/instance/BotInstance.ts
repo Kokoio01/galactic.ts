@@ -38,7 +38,7 @@ export abstract class BotInstance {
         'SELF_CHECK_RECEIVED': undefined,
     }
 
-    protected startProcess(instanceID: number, clusterID: number, shardList: number[], totalShards: number, token: string, intents: GatewayIntentsString[]): void {
+    protected startProcess(instanceID: number, clusterID: number, shardList: number[], totalShards: number, token: string, intents: GatewayIntentsString[], clusterEnvironment: Record<string, string>): void {
         try {
             const childProcess = fork(this.entryPoint, {
                 env: {
@@ -48,7 +48,8 @@ export abstract class BotInstance {
                     TOTAL_SHARDS: totalShards.toString(),
                     TOKEN: token,
                     INTENTS: intents.join(','),
-                    FORCE_COLOR: 'true'
+                    FORCE_COLOR: 'true',
+                    ...clusterEnvironment
                 },
                 stdio: 'inherit',
                 execArgv: this.execArgv,

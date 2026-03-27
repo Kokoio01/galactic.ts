@@ -11,6 +11,7 @@ export class Bridge {
     public readonly connectedInstances: Map<string, BridgeInstanceConnection> = new Map();
     private readonly token: string;
     private readonly intents: GatewayIntentsString[];
+    public readonly clusterEnvironment: Record<string, string> | undefined;
     private readonly shardsPerCluster: number = 1;
     private readonly clusterToStart: number = 1
     private readonly reclusteringTimeoutInMs: number;
@@ -30,10 +31,11 @@ export class Bridge {
         ERROR: undefined
     }
 
-    constructor(port: number, token: string, intents: GatewayIntentsString[], shardsPerCluster: number, clusterToStart: number, reclusteringTimeoutInMs: number) {
+    constructor(port: number, token: string, intents: GatewayIntentsString[], shardsPerCluster: number, clusterToStart: number, reclusteringTimeoutInMs: number, clusterEnvironment?: Record<string, string>) {
         this.port = port;
         this.token = token;
         this.intents = intents;
+        this.clusterEnvironment = clusterEnvironment;
         this.clusterToStart = clusterToStart;
         this.shardsPerCluster = shardsPerCluster;
         this.reclusteringTimeoutInMs = reclusteringTimeoutInMs;
@@ -160,7 +162,8 @@ export class Bridge {
                 totalShards: this.getTotalShards(),
                 shardList: cluster.shardList,
                 token: this.token,
-                intents: this.intents
+                intents: this.intents,
+                clusterEnvironment: this.clusterEnvironment
             }
         });
     }
